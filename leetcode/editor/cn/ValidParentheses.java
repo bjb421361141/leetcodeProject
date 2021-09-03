@@ -56,6 +56,9 @@
 
 package leetcode.editor.cn;
 
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Stack;
 
 public class ValidParentheses {
@@ -63,8 +66,12 @@ public class ValidParentheses {
         Solution solution = new ValidParentheses().new Solution();
         System.out.println(solution.isValid("({})"));
     }
+
     //leetcode submit region begin(Prohibit modification and deletion)
     class Solution {
+        /**
+         * 栈可以只保存{ （ [  ，遇到 ] ) }时 比较栈内的元素
+         */
         public boolean isValid(String s) {
             char[] chars = s.toCharArray();
             Stack<Character> strStack = new Stack<>();
@@ -75,7 +82,7 @@ public class ValidParentheses {
                     return false;
                 } else if (')' == chars[i] && !getAndPopChar(strStack, '(')) {
                     return false;
-                } else if("}])".indexOf(chars[i]) < 0){
+                } else if ("}])".indexOf(chars[i]) < 0) {
                     strStack.push(chars[i]);
                 }
             }
@@ -98,7 +105,7 @@ public class ValidParentheses {
         boolean getAndPopChar(Stack<Character> stack, Character targetChar) {
             while (stack != null && !stack.isEmpty() && stack.peek() != null) {
                 Character tmpChar = stack.pop();
-                if("{[(".indexOf(targetChar) >= 0 && targetChar != tmpChar) {
+                if ("{[(".indexOf(targetChar) >= 0 && targetChar != tmpChar) {
                     return false;
                 } else if (targetChar == tmpChar) {
                     return true;
@@ -107,6 +114,31 @@ public class ValidParentheses {
             return false;
         }
     }
-//leetcode submit region end(Prohibit modification and deletion)
 
+    class Solution1 {
+        /**
+         * 使用Map 来保存相应的元素 顺序问题
+         */
+        public boolean isValid(String s) {
+            HashMap<Character, Character> pairs = new HashMap<>();
+            pairs.put('}', '{');
+            pairs.put(']', '[');
+            pairs.put(')', '(');
+            Deque<Character> bracketsStack = new LinkedList<Character>();
+            for (int i = 0; i < s.length(); i++) {
+                Character character = s.charAt(i);
+                if (pairs.containsKey(character)) { //存在则从操作栈中取出元素
+                    if (bracketsStack.isEmpty() || bracketsStack.peek() != pairs.get(character)) {
+                        return false;
+                    }
+                    bracketsStack.pop();
+                } else if("{[(".indexOf(character) >= 0){
+                    bracketsStack.push(character);
+                }
+            }
+            //对括号栈中的数据进行判断
+            return bracketsStack.isEmpty();
+        }
+    }
+//leetcode submit region end(Prohibit modification and deletion)
 }
